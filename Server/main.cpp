@@ -63,10 +63,10 @@ string list(string directory)
 			string fqp = directory.c_str();
 			fqp += cur->d_name;
 			stat(fqp.c_str(), &st);
-			if(!S_ISDIR(st.st_mode))
-				listing.append("f\t");
-			else
+			if(S_ISDIR(st.st_mode))
 				listing.append("d\t");
+			else
+				listing.append("f\t");
 			listing.append(cur->d_name);
 			listing.append("\n");
 		}
