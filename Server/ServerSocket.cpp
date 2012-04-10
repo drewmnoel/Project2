@@ -64,13 +64,30 @@ void ServerSocket::Bind(int port)
 		exit(14);
 	}
 }
+
+bool ServerSocket::SendData(int value)
+{
+	char buffer[STRLEN];
+	memset(buffer, 0, STRLEN);
+	sprintf(buffer, "%d", value);
+	return SendData(buffer);
+}
 bool ServerSocket::SendData(char* buffer)
 {
 	if (strcmp(buffer, "end") == 0 || strcmp(buffer, "end") == 0)
 	{
 				done = true;
 	}
-	return ServerSocket::SendData(buffer);
+	send(mySocket, buffer, strlen(buffer), 0);
+	return true;
+}
+
+bool ServerSocket::SendData(string value)
+{
+	char buffer[STRLEN];
+	memset(buffer, 0, STRLEN);
+	sprintf(buffer, "%s", value.c_str());
+	return SendData(buffer);
 }
 
 bool ServerSocket::RecvData(char *buffer, int size)
@@ -78,22 +95,23 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	int i = recv(mySocket, buffer, size, 0);
 	buffer[i] = '\0';
 
-	cout << "<<< " << buffer << endl;
+	cout << "<<< " << buffer;
 
 	// Convert to lower-case to compare
 	for(int j=0; j<i; j++)
 		buffer[j] = tolower(buffer[j]);
 
 	// Process commands
-	if(strcmp(buffer, "list") == 0)
+	if(strncmp(buffer, "list", 4) == 0)
 	{
-		string dirList = list(".");
+		// Client wants a dir list!
+		dirList(".");
 	}
-	else if (strncmp(buffer, "send", 4))
+	else if (strncmp(buffer, "send", 4) == 0)
 	{
 		// Client wants a file!
 	}
-	else if (strcmp(buffer, "quit") == 0)
+	else if (strncmp(buffer, "quit", 4) == 0)
 	{
 		// Client wants us to go away!
 		done = true;
@@ -117,10 +135,27 @@ void ServerSocket::GetAndSendMessage()
 void ServerSocket::RecvAndDisplayMessage()
 {
 	char message[STRLEN];
+	memset(message, 0, STRLEN);
 	RecvData(message, STRLEN);
 }
 
 bool ServerSocket::isOver()
 {
 	return done;
+}
+
+void ServerSocket::dirList(string dir)
+{
+	string theList;
+
+	theList = list(dir).c_str();
+
+	// Sends the length of the list
+	SendData(theList.length());
+
+	// Waits for an "OK"
+	RecvAndDisplayMessage();
+
+	// Send the list
+	SendData(theList);
 }
