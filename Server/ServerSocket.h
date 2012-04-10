@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void Log(char*, int, char*, int, char*);
+string list(string);
 
 class ServerSocket : public Socket
 {

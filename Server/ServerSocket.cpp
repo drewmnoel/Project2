@@ -25,8 +25,6 @@ void ServerSocket::StartHosting(int port)
 
 void ServerSocket::Listen()
 {
-	//cout<<"LISTEN FOR CLIENT..."<<endl;
-
 	if (listen(mySocket, 1) == SOCKET_ERROR)
 	{
 		cerr << "ServerSocket: Error listening on socket\n";
@@ -34,8 +32,6 @@ void ServerSocket::Listen()
 		WSACleanup();
 		exit(15);
 	}
-
-	//cout<<"ACCEPT CONNECTION..."<<endl;
 
 	sockaddr_in client_info;
 	int size = sizeof(client_info);
@@ -83,9 +79,24 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	buffer[i] = '\0';
 
 	cout << "<<< " << buffer << endl;
-	if (strcmp(buffer, "end") == 0 || strcmp(buffer, "end") == 0)
+
+	// Convert to lower-case to compare
+	for(int j=0; j<i; j++)
+		buffer[j] = tolower(buffer[j]);
+
+	// Process commands
+	if(strcmp(buffer, "list") == 0)
 	{
-				done = true;
+		string dirList = list(".");
+	}
+	else if (strncmp(buffer, "send", 4))
+	{
+		// Client wants a file!
+	}
+	else if (strcmp(buffer, "quit") == 0)
+	{
+		// Client wants us to go away!
+		done = true;
 	}
 	return true;
 }
