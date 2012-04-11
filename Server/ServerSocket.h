@@ -19,12 +19,14 @@ public:
 	void Bind(int port);
 	void StartHosting(int port);
 	ServerSocket();
-	bool SendData(char*);
-	bool SendData(int);
-	bool SendData(string);
+	int SendData(char*, int);
+	int SendData(char*);
+	int SendData(int);
+	int SendData(string);
 	bool RecvData(char *buffer, int size);
 	void GetAndSendMessage();
 	void RecvAndDisplayMessage();
 	bool isOver();
 	void dirList(string);
+	void sendFile(string);
 };

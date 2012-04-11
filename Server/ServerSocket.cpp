@@ -53,24 +53,25 @@ void ServerSocket::Bind(int port)
 	}
 }
 
-bool ServerSocket::SendData(int value)
+int ServerSocket::SendData(int value)
 {
 	char buffer[STRLEN];
 	memset(buffer, 0, STRLEN);
 	sprintf(buffer, "%d", value);
 	return SendData(buffer);
 }
-bool ServerSocket::SendData(char* buffer)
+
+int ServerSocket::SendData(char* buffer)
 {
-	if (strcmp(buffer, "end") == 0 || strcmp(buffer, "end") == 0)
-	{
-				done = true;
-	}
-	send(mySocket, buffer, strlen(buffer), 0);
-	return true;
+	return send(mySocket, buffer, strlen(buffer), 0);
 }
 
-bool ServerSocket::SendData(string value)
+int ServerSocket::SendData(char* buffer, int size)
+{
+	return send(mySocket, buffer, size, 0);
+}
+
+int ServerSocket::SendData(string value)
 {
 	char buffer[STRLEN];
 	memset(buffer, 0, STRLEN);
@@ -93,11 +94,13 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	if(strncmp(buffer, "list", 4) == 0)
 	{
 		// Client wants a dir list!
-		dirList(".");
+		// We'll just send them the current one
+		dirList("./");
 	}
 	else if (strncmp(buffer, "send", 4) == 0)
 	{
 		// Client wants a file!
+		sendFile(buffer);
 	}
 	else if (strncmp(buffer, "quit", 4) == 0)
 	{
@@ -146,4 +149,50 @@ void ServerSocket::dirList(string dir)
 
 	// Send the list
 	SendData(theList);
+}
+
+void ServerSocket::sendFile(string filename)
+{
+	// Chop off the "send " part to get the filename
+	filename = filename.substr(5,filename.length());
+
+	// Chop off the newline character
+	filename = filename.substr(0,filename.length()-1);
+
+	// Lock in the current directory
+	filename = "./" + filename;
+
+	ifstream fin(filename.c_str(), ios::binary);
+
+	// Send 0 (could not open)
+	if(!fin.is_open())
+	{
+		SendData(0);
+		return;
+	}
+
+	// Get the file size to send
+	fin.seekg(0, ios::end);
+	unsigned long size = fin.tellg();
+	fin.seekg(0, ios::beg);
+
+	// Send the size and wait for an OK
+	SendData(size);
+	RecvAndDisplayMessage();
+
+	// UNLEASH THE KRAKEN
+	char buffer[STRLEN];
+	unsigned long sent = 0;
+
+	// Send as much as we can at once
+	while(sent+STRLEN <= size)
+	{
+		fin.read(buffer, STRLEN);
+
+		sent += SendData(buffer, STRLEN);
+	}
+
+	// Send those pesky remaining bytes... THE HARD WAY
+	fin.read(buffer, size-sent);
+	SendData(buffer, size-sent);
 }
