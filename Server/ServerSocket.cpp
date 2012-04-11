@@ -6,10 +6,51 @@ ServerSocket::ServerSocket()
 	authed = false;
 }
 
-void ServerSocket::StartHosting(int port)
+bool ServerSocket::Auth(void)
 {
-	Bind(port);
-	Listen();
+	SendData("LOGIN ");
+
+	char buffer[STRLEN];
+	int i = recv(mySocket, buffer, STRLEN, 0);
+	buffer[i] = '\0';
+	if (strcmp(buffer, "ADMIN\n") == 0)
+	{
+		authed = true;
+		SendData("WELCOME\n");
+		return true;
+	}
+
+	SendData("UNWELCOME\n");
+	return false;
+}
+
+void ServerSocket::Bind(int port)
+{
+	myAddress.sin_family = AF_INET;
+	myAddress.sin_addr.s_addr = inet_addr("0.0.0.0");
+	myAddress.sin_port = htons(port);
+
+	if (bind(mySocket, (SOCKADDR*) &myAddress,
+			sizeof(myAddress)) == SOCKET_ERROR)
+	{
+		cerr << "ServerSocket: Failed to connect\n";
+		system("pause");
+		WSACleanup();
+		exit(14);
+	}
+}
+
+void ServerSocket::GetAndSendMessage()
+{
+	char message[STRLEN];
+
+	cout << ">>> ";
+
+	cin.get(message, STRLEN);
+
+	cin.ignore(1);
+
+	SendData(message);
 }
 
 void ServerSocket::Listen()
@@ -38,64 +79,11 @@ void ServerSocket::Listen()
 	mySocket = acceptSocket;
 }
 
-void ServerSocket::Bind(int port)
+void ServerSocket::RecvAndDisplayMessage()
 {
-	myAddress.sin_family = AF_INET;
-	myAddress.sin_addr.s_addr = inet_addr("0.0.0.0");
-	myAddress.sin_port = htons(port);
-
-	if (bind(mySocket, (SOCKADDR*) &myAddress,
-			sizeof(myAddress)) == SOCKET_ERROR)
-	{
-		cerr << "ServerSocket: Failed to connect\n";
-		system("pause");
-		WSACleanup();
-		exit(14);
-	}
-}
-
-bool ServerSocket::auth(void)
-{
-	SendData("LOGIN ");
-
-	char buffer[STRLEN];
-	int i = recv(mySocket, buffer, STRLEN, 0);
-	buffer[i] = '\0';
-	if (strcmp(buffer, "ADMIN\n") == 0)
-	{
-		authed = true;
-		SendData("WELCOME\n");
-		return true;
-	}
-
-	SendData("UNWELCOME\n");
-	return false;
-}
-
-int ServerSocket::SendData(int value)
-{
-	char buffer[STRLEN];
-	memset(buffer, 0, STRLEN);
-	sprintf(buffer, "%d", value);
-	return SendData(buffer);
-}
-
-int ServerSocket::SendData(char* buffer)
-{
-	return send(mySocket, buffer, strlen(buffer), 0);
-}
-
-int ServerSocket::SendData(char* buffer, int size)
-{
-	return send(mySocket, buffer, size, 0);
-}
-
-int ServerSocket::SendData(string value)
-{
-	char buffer[STRLEN];
-	memset(buffer, 0, STRLEN);
-	sprintf(buffer, "%s", value.c_str());
-	return SendData(buffer);
+	char message[STRLEN];
+	memset(message, 0, STRLEN);
+	RecvData(message, STRLEN);
 }
 
 bool ServerSocket::RecvData(char *buffer, int size)
@@ -129,29 +117,36 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	return true;
 }
 
-void ServerSocket::GetAndSendMessage()
+int ServerSocket::SendData(char* buffer)
 {
-	char message[STRLEN];
-
-	cout << ">>> ";
-
-	cin.get(message, STRLEN);
-
-	cin.ignore(1);
-
-	SendData(message);
+	return send(mySocket, buffer, strlen(buffer), 0);
 }
 
-void ServerSocket::RecvAndDisplayMessage()
+int ServerSocket::SendData(char* buffer, int size)
 {
-	char message[STRLEN];
-	memset(message, 0, STRLEN);
-	RecvData(message, STRLEN);
+	return send(mySocket, buffer, size, 0);
 }
 
-bool ServerSocket::isOver()
+int ServerSocket::SendData(int value)
 {
-	return (done || !authed);
+	char buffer[STRLEN];
+	memset(buffer, 0, STRLEN);
+	sprintf(buffer, "%d", value);
+	return SendData(buffer);
+}
+
+int ServerSocket::SendData(string value)
+{
+	char buffer[STRLEN];
+	memset(buffer, 0, STRLEN);
+	sprintf(buffer, "%s", value.c_str());
+	return SendData(buffer);
+}
+
+void ServerSocket::StartHosting(int port)
+{
+	Bind(port);
+	Listen();
 }
 
 void ServerSocket::dirList(string dir)
@@ -168,6 +163,11 @@ void ServerSocket::dirList(string dir)
 
 	// Send the list
 	SendData(theList);
+}
+
+bool ServerSocket::isOver()
+{
+	return (done || !authed);
 }
 
 void ServerSocket::sendFile(string filename)

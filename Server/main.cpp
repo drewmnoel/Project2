@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 	cout << ">>> CONNECTION ESTABLISHED <<<" << endl;
 
 	// Force user to log in
-	if (!sockServer.auth())
+	if (!sockServer.Auth())
 		return -1;
 	while (!sockServer.isOver())
 	{

@@ -16,19 +16,20 @@ private:
 	bool done;
 	bool authed;
 public:
-	bool auth(void);
-	void Listen();
-	void Bind(int port);
-	void StartHosting(int port);
 	ServerSocket();
-	int SendData(char*, int);
+
+	bool Auth(void);
+	void Bind(int port);
+	void GetAndSendMessage();
+	void Listen();
+	void RecvAndDisplayMessage();
+	bool RecvData(char *buffer, int size);
 	int SendData(char*);
+	int SendData(char*, int);
 	int SendData(int);
 	int SendData(string);
-	bool RecvData(char *buffer, int size);
-	void GetAndSendMessage();
-	void RecvAndDisplayMessage();
-	bool isOver();
+	void StartHosting(int port);
 	void dirList(string);
+	bool isOver();
 	void sendFile(string);
 };
