@@ -26,13 +26,12 @@ int main(int argc, char** argv)
 	sockServer.StartHosting(port);
 
 	cout << ">>> CONNECTION ESTABLISHED <<<" << endl;
-	//sockServer.RecvData(buffer,80);
-	//sockServer.SendData("HELO");
+	sockServer.RecvData(buffer,80);
+	sockServer.SendData("HELO");
 
 	while (!sockServer.isOver())
 	{
 		sockServer.RecvAndDisplayMessage();
-		//sockServer.GetAndSendMessage();
 	}
 }
 

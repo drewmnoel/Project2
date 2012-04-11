@@ -2,21 +2,9 @@
 #include "ServerSocket.h"
 ServerSocket::ServerSocket()
 {
-	ofstream log("log.csv", fstream::app);
-
-	log.seekp(0, ios::end);
-
-	// If new file, lets put some column names, eh?
-	if(log.tellp() == 0)
-	{
-		log << "Date,Time,SourceIP,SourcePort,DestinationIP,DestinationPort,Message" << endl;
-		log.seekp(0, ios::beg);
-	}
-
-	log.close();
-
 	done = false;
 }
+
 void ServerSocket::StartHosting(int port)
 {
 	Bind(port);
