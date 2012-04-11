@@ -10,7 +10,7 @@ using namespace std;
 
 string list(string);
 
-class ServerSocket : public Socket
+class ServerSocket: public Socket
 {
 private:
 	bool done;

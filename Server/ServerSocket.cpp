@@ -29,7 +29,7 @@ void ServerSocket::Listen()
 
 	while (acceptSocket == SOCKET_ERROR)
 	{
-		acceptSocket = accept(myBackup, (sockaddr*)&client_info,&size);
+		acceptSocket = accept(myBackup, (sockaddr*) &client_info, &size);
 	}
 
 	clientPort = ntohs(client_info.sin_port);
@@ -61,7 +61,7 @@ bool ServerSocket::auth(void)
 	char buffer[STRLEN];
 	int i = recv(mySocket, buffer, STRLEN, 0);
 	buffer[i] = '\0';
-	if(strcmp(buffer, "ADMIN\n") == 0)
+	if (strcmp(buffer, "ADMIN\n") == 0)
 	{
 		authed = true;
 		SendData("WELCOME\n");
@@ -106,22 +106,22 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	cout << "<<< " << buffer;
 
 	// Convert to lower-case to compare
-	for(int j=0; j<i; j++)
+	for (int j = 0; j < i; j++)
 		buffer[j] = tolower(buffer[j]);
 
 	// Process commands
-	if(strncmp(buffer, "list", 4) == 0)
+	if (strncmp(buffer, "list", 4) == 0)
 	{
 		// Client wants a dir list!
 		// We'll just send them the current one
 		dirList("./");
 	}
-	else if(strncmp(buffer, "send", 4) == 0)
+	else if (strncmp(buffer, "send", 4) == 0)
 	{
 		// Client wants a file!
 		sendFile(buffer);
 	}
-	else if(strncmp(buffer, "quit", 4) == 0)
+	else if (strncmp(buffer, "quit", 4) == 0)
 	{
 		// Client wants us to go away!
 		done = true;
@@ -173,10 +173,10 @@ void ServerSocket::dirList(string dir)
 void ServerSocket::sendFile(string filename)
 {
 	// Chop off the "send " part to get the filename
-	filename = filename.substr(5,filename.length());
+	filename = filename.substr(5, filename.length());
 
 	// Chop off the newline character
-	filename = filename.substr(0,filename.length()-1);
+	filename = filename.substr(0, filename.length() - 1);
 
 	// Lock in the current directory
 	filename = "./" + filename;
@@ -184,7 +184,7 @@ void ServerSocket::sendFile(string filename)
 	ifstream fin(filename.c_str(), ios::binary);
 
 	// Send 0 (could not open)
-	if(!fin.is_open())
+	if (!fin.is_open())
 	{
 		SendData(0);
 		return;
@@ -204,7 +204,7 @@ void ServerSocket::sendFile(string filename)
 	unsigned long sent = 0;
 
 	// Send as much as we can at once
-	while(sent+STRLEN <= size)
+	while (sent + STRLEN <= size)
 	{
 		fin.read(buffer, STRLEN);
 
@@ -212,6 +212,6 @@ void ServerSocket::sendFile(string filename)
 	}
 
 	// Send those pesky remaining bytes... THE HARD WAY
-	fin.read(buffer, size-sent);
-	SendData(buffer, size-sent);
+	fin.read(buffer, size - sent);
+	SendData(buffer, size - sent);
 }
