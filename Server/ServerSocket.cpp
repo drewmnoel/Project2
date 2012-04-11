@@ -3,6 +3,7 @@
 ServerSocket::ServerSocket()
 {
 	done = false;
+	authed = false;
 }
 
 void ServerSocket::StartHosting(int port)
@@ -53,6 +54,24 @@ void ServerSocket::Bind(int port)
 	}
 }
 
+bool ServerSocket::auth(void)
+{
+	SendData("LOGIN ");
+
+	char buffer[STRLEN];
+	int i = recv(mySocket, buffer, STRLEN, 0);
+	buffer[i] = '\0';
+	if(strcmp(buffer, "ADMIN\n") == 0)
+	{
+		authed = true;
+		SendData("WELCOME\n");
+		return true;
+	}
+
+	SendData("UNWELCOME\n");
+	return false;
+}
+
 int ServerSocket::SendData(int value)
 {
 	char buffer[STRLEN];
@@ -97,12 +116,12 @@ bool ServerSocket::RecvData(char *buffer, int size)
 		// We'll just send them the current one
 		dirList("./");
 	}
-	else if (strncmp(buffer, "send", 4) == 0)
+	else if(strncmp(buffer, "send", 4) == 0)
 	{
 		// Client wants a file!
 		sendFile(buffer);
 	}
-	else if (strncmp(buffer, "quit", 4) == 0)
+	else if(strncmp(buffer, "quit", 4) == 0)
 	{
 		// Client wants us to go away!
 		done = true;
@@ -132,7 +151,7 @@ void ServerSocket::RecvAndDisplayMessage()
 
 bool ServerSocket::isOver()
 {
-	return done;
+	return (done || !authed);
 }
 
 void ServerSocket::dirList(string dir)

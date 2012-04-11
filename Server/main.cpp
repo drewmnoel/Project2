@@ -18,17 +18,16 @@ int main(int argc, char** argv)
 		port = atoi(argv[1]);
 	}
 
-	char buffer[80];
-
 	ServerSocket sockServer;
 
 	cout << "<<< AWAITING CONNECTION ON PORT " << port << " >>>" << endl;
 	sockServer.StartHosting(port);
 
 	cout << ">>> CONNECTION ESTABLISHED <<<" << endl;
-	sockServer.RecvData(buffer,80);
-	sockServer.SendData("HELO");
 
+	// Force user to log in
+	if(!sockServer.auth())
+		return -1;
 	while (!sockServer.isOver())
 	{
 		sockServer.RecvAndDisplayMessage();

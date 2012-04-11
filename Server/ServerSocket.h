@@ -14,7 +14,9 @@ class ServerSocket : public Socket
 {
 private:
 	bool done;
+	bool authed;
 public:
+	bool auth(void);
 	void Listen();
 	void Bind(int port);
 	void StartHosting(int port);
