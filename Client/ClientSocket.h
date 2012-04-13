@@ -4,11 +4,12 @@
 #include "Socket.h"
 #include <string>
 
-class ClientSocket : public Socket{
-    public:
-        bool ConnectToServer(const char *ipAddress,int port);
-        bool GetFile(std::string);
-        bool GetDir();
-        bool Login();
-        bool Command();
+class ClientSocket: public Socket
+{
+public:
+	bool ConnectToServer(const char *ipAddress, int port);
+	bool GetFile(std::string);
+	bool GetDir();
+	bool Login();
+	bool Command();
 };

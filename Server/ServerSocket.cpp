@@ -161,10 +161,11 @@ void ServerSocket::dirList(string dir)
 	// Waits for an "OK"
 	RecvAndDisplayMessage();
 
-    int sent = 0;
-    while (sent != theList.length()){
-        sent += SendData(theList.substr(sent,STRLEN));
-    }
+	int sent = 0;
+	while (sent != theList.length())
+	{
+		sent += SendData(theList.substr(sent, STRLEN));
+	}
 }
 
 bool ServerSocket::isOver()
@@ -212,9 +213,10 @@ void ServerSocket::sendFile(string filename)
 
 		sent += SendData(buffer, STRLEN);
 	}
-    if (sent != size){
-        // Send those pesky remaining bytes... THE HARD WAY
-        fin.read(buffer, size - sent);
-        SendData(buffer, size - sent);
-    }
+	if (sent != size)
+	{
+		// Send those pesky remaining bytes... THE HARD WAY
+		fin.read(buffer, size - sent);
+		SendData(buffer, size - sent);
+	}
 }
