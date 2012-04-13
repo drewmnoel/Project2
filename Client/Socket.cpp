@@ -30,7 +30,7 @@ Socket::~Socket()
 	WSACleanup();
 }
 
-bool Socket::SendData(char *buffer)
+bool Socket::SendData(const char *buffer)
 {
 	send(mySocket, buffer, strlen(buffer), 0);
 	return true;

@@ -18,7 +18,7 @@ protected:
 public:
 	Socket();
 	~Socket();
-	bool SendData(char*);
+	bool SendData(const char*);
 	int RecvData(char*, int);
 	void CloseConnection();
 };

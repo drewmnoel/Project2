@@ -39,11 +39,10 @@ bool ClientSocket::GetFile(std::string input)
 	char buffer[STRLEN];
 	int totalsize = 0;
 	int totalrecv = 0;
-	int recsize = 0;
 
 	//get length of all of the list
 	SendData((char*) input.c_str());
-	recsize = RecvData(buffer, sizeof(buffer));
+	RecvData(buffer, sizeof(buffer));
 	totalsize = atoi(buffer);
 	SendData("OK");
 
@@ -55,7 +54,7 @@ bool ClientSocket::GetFile(std::string input)
 	// Send those pesky remaining bytes... THE HARD WAY
 	if (totalrecv != totalsize)
 	{
-		recsize = RecvData(buffer, STRLEN);
+		RecvData(buffer, STRLEN);
 		file.write(buffer, totalsize - totalrecv);
 	}
 	//fin.read(buffer, size - sent);
@@ -77,11 +76,10 @@ bool ClientSocket::GetDir()
 	char buffer[STRLEN];
 	int totalsize = 0;
 	int totalrecv = 0;
-	int recsize = 0;
 
 	//get length of all of the list
 	SendData("LIST");
-	recsize = RecvData(buffer, sizeof(buffer));
+	RecvData(buffer, sizeof(buffer));
 	totalsize = atoi(buffer);
 	SendData("OK");
 
@@ -98,9 +96,8 @@ bool ClientSocket::GetDir()
 bool ClientSocket::Login()
 {
 	char buffer[STRLEN];
-	int recsize;
 
-	recsize = RecvData(buffer, sizeof(buffer));
+	RecvData(buffer, sizeof(buffer));
 	if (strcmp(buffer, "LOGIN") == 0)
 	{
 		std::cout << "Authorization Code:";
@@ -109,7 +106,7 @@ bool ClientSocket::Login()
 		SendData(buffer);
 	}
 
-	recsize = RecvData(buffer, sizeof(buffer));
+	RecvData(buffer, sizeof(buffer));
 	if (strcmp(buffer, "WELCOME") == 0)
 	{
 		std::cout << "Login Sucessful\n";
@@ -127,7 +124,7 @@ bool ClientSocket::Command()
 	std::string command;
 	std::cout << "Command: ";
 	std::getline(std::cin, command);
-	for (int x = 0; x < command.substr(0, command.find(" ")).length(); x++)
+	for (unsigned int x = 0; x < command.substr(0, command.find(" ")).length(); x++)
 	{
 		command[x] = tolower(command[x]);
 	}

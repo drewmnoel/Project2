@@ -24,7 +24,7 @@ public:
 	void Listen();
 	void RecvAndDisplayMessage();
 	bool RecvData(char *buffer, int size);
-	int SendData(char*);
+	int SendData(const char*);
 	int SendData(char*, int);
 	int SendData(int);
 	int SendData(string);

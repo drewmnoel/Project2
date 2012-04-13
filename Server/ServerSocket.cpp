@@ -68,7 +68,7 @@ void ServerSocket::Listen()
 
 	acceptSocket = SOCKET_ERROR;
 
-	while (acceptSocket == SOCKET_ERROR)
+	while ((signed int)acceptSocket == SOCKET_ERROR)
 	{
 		acceptSocket = accept(myBackup, (sockaddr*) &client_info, &size);
 	}
@@ -117,7 +117,7 @@ bool ServerSocket::RecvData(char *buffer, int size)
 	return true;
 }
 
-int ServerSocket::SendData(char* buffer)
+int ServerSocket::SendData(const char* buffer)
 {
 	return send(mySocket, buffer, strlen(buffer), 0);
 }
@@ -161,7 +161,7 @@ void ServerSocket::dirList(string dir)
 	// Waits for an "OK"
 	RecvAndDisplayMessage();
 
-	int sent = 0;
+	unsigned long sent = 0;
 	while (sent != theList.length())
 	{
 		sent += SendData(theList.substr(sent, STRLEN));
