@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1334294275 source:c:\users\nedm\desktop\git\client\main.cpp
+	<iostream>
+	<string>
+	<cstdlib>
+	"ClientSocket.h"
+
+1334278794 source:c:\users\nedm\desktop\git\client\socket.cpp
+	"Socket.h"
+
+1334278518 c:\users\nedm\desktop\git\client\socket.h
+	<iostream>
+	"WinSock2.h"
+
+1334294253 c:\users\nedm\desktop\git\client\clientsocket.h
+	"Winsock2.h"
+	"Socket.h"
+	<string>
+
+1334328464 source:c:\users\nedm\desktop\git\client\clientsocket.cpp
+	<iostream>
+	<string>
+	<cstdlib>
+	<cstring>
+	<fstream>
+	"ClientSocket.h"
+
