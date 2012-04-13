@@ -32,6 +32,8 @@ int main(int argc, char** argv)
 	{
 		sockServer.RecvAndDisplayMessage();
 	}
+	system("Pause");
+	return 0;
 }
 
 string list(string directory)

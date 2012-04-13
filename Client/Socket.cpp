@@ -36,11 +36,11 @@ bool Socket::SendData(char *buffer)
 	return true;
 }
 
-bool Socket::RecvData(char *buffer, int size)
+int Socket::RecvData(char *buffer, int size)
 {
 	int i = recv(mySocket, buffer, size, 0);
 	buffer[i] = '\0';
-	return true;
+	return i;
 }
 
 void Socket::CloseConnection()

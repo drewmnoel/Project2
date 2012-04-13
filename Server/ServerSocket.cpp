@@ -8,19 +8,19 @@ ServerSocket::ServerSocket()
 
 bool ServerSocket::Auth(void)
 {
-	SendData("LOGIN ");
+	SendData("LOGIN");
 
 	char buffer[STRLEN];
 	int i = recv(mySocket, buffer, STRLEN, 0);
 	buffer[i] = '\0';
-	if (strcmp(buffer, "ADMIN\n") == 0)
+	if (strcmp(buffer, "ADMIN") == 0)
 	{
 		authed = true;
-		SendData("WELCOME\n");
+		SendData("WELCOME");
 		return true;
 	}
 
-	SendData("UNWELCOME\n");
+	SendData("UNWELCOME");
 	return false;
 }
 
@@ -161,8 +161,10 @@ void ServerSocket::dirList(string dir)
 	// Waits for an "OK"
 	RecvAndDisplayMessage();
 
-	// Send the list
-	SendData(theList);
+    int sent = 0;
+    while (sent != theList.length()){
+        sent += SendData(theList.substr(sent,STRLEN));
+    }
 }
 
 bool ServerSocket::isOver()
@@ -176,7 +178,7 @@ void ServerSocket::sendFile(string filename)
 	filename = filename.substr(5, filename.length());
 
 	// Chop off the newline character
-	filename = filename.substr(0, filename.length() - 1);
+	//filename = filename.substr(0, filename.length() - 1);
 
 	// Lock in the current directory
 	filename = "./" + filename;
@@ -210,8 +212,9 @@ void ServerSocket::sendFile(string filename)
 
 		sent += SendData(buffer, STRLEN);
 	}
-
-	// Send those pesky remaining bytes... THE HARD WAY
-	fin.read(buffer, size - sent);
-	SendData(buffer, size - sent);
+    if (sent != size){
+        // Send those pesky remaining bytes... THE HARD WAY
+        fin.read(buffer, size - sent);
+        SendData(buffer, size - sent);
+    }
 }

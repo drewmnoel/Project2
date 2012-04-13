@@ -9,22 +9,16 @@ const int STRLEN = 256;
 
 class Socket
 {
-protected:
-	WSADATA wsaData;
-	SOCKET mySocket;
-	SOCKET myBackup;
-	SOCKET acceptSocket;
-	sockaddr_in myAddress;
-	long clientPort, port;
-	char* clientAddress;
-	char *address;
-public:
-	Socket();
-	~Socket();
-	bool SendData(char*);
-	bool RecvData(char*, int);
-	int getPort();
-	char* getAddr();
-	void CloseConnection();
-	void GetAndSendMessage();
+    protected:
+        WSADATA wsaData;
+        SOCKET mySocket;
+        SOCKET myBackup;
+        SOCKET acceptSocket;
+        sockaddr_in myAddress;
+    public:
+        Socket();
+        ~Socket();
+        bool SendData(char*);
+        int RecvData(char*,int);
+        void CloseConnection();
 };
