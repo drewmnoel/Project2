@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <cstring>
 #include <cstdlib>
 #include <dirent.h>
 #include <sys/stat.h>
